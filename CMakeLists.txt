@@ -45,3 +45,16 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>${CMAKE_CURRENT_SOURCE_DIR})
+
+# Defines CMAKE_INSTALL_LIBDIR and CMAKE_INSTALL_BINDIR
+# See https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+include(GNUInstallDirs)
+
+install(TARGETS ${PROJECT_NAME}
+  ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"                            COMPONENT shlib
+  LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"                            COMPONENT lib
+  RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}"                            COMPONENT bin
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_TARGET_NAME}" COMPONENT dev)
+
+# Makes the project importable from the build directory
+export(TARGETS ${PROJECT_NAME} FILE ${PROJECT_NAME}Config.cmake)
