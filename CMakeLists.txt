@@ -12,13 +12,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # Find the QtCore library.
-find_package(Qt5Core)
+find_package(Qt5 COMPONENTS Core REQUIRED)
+list(APPEND LIBRARIES Qt5::Core)
+
+# Find LibArchive
+find_package(LibArchive REQUIRED)
+list(APPEND LIBRARIES ${LibArchive_LIBRARIES})
 
 # Include Directories.
-include_directories(.)
-include_directories(include)
+include_directories(${CMAKE_CURRENT_LIST_DIR})
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
-add_library(QArchive
+add_library(${PROJECT_NAME}
 	    src/qarchivediskcompressor.cc
 	    src/qarchivediskextractor.cc
 	    src/qarchive_enums.cc
@@ -35,5 +40,8 @@ add_library(QArchive
 	    include/qarchiveioreader_p.hpp
 	    )
 
-target_link_libraries(QArchive PUBLIC Qt5::Core archive)
-target_include_directories(QArchive PUBLIC . include)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBRARIES})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>${CMAKE_CURRENT_SOURCE_DIR})
